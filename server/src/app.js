@@ -13,7 +13,7 @@ app.use(
 );
 app.use(express.json());
 
-app.use(planetsRouter);
-app.use(launchesRouter);
+app.use("/planets", planetsRouter);
+app.use("/launches", launchesRouter);
 
 export default app;
