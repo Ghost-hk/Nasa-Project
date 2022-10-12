@@ -6,11 +6,11 @@ import {
   abortLaunchfromModel,
 } from "../../models/launches.model.js";
 
-export const getAllLaunches = (req, res) => {
-  return res.status(200).json(GetAllLaunchsFromModel());
+export const getAllLaunches = async (req, res) => {
+  return res.status(200).json(await GetAllLaunchsFromModel());
 };
 
-export const addNewLaunch = (req, res) => {
+export const addNewLaunch = async (req, res) => {
   const launch = req.body;
   launch.launchDate = new Date(launch.launchDate);
 
@@ -27,7 +27,7 @@ export const addNewLaunch = (req, res) => {
     return res.status(400).json({ error: "Invalid Date!" });
   }
 
-  addNewLaunchToModel(launch);
+  await addNewLaunchToModel(launch);
   return res.status(201).json(launch);
 };
 

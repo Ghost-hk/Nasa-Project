@@ -4,8 +4,10 @@ import { fileURLToPath } from "url";
 
 import { parse } from "csv-parse";
 
-const __filename = fileURLToPath(import.meta.url);
+import { planetsModel } from "./planets.mongo.js";
+import { error } from "console";
 
+const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const planets = [];
@@ -30,20 +32,37 @@ export const loadPlanetsData = () => {
           columns: true,
         })
       )
-      .on("data", (data) => {
+      .on("data", async (data) => {
         if (isHabitablePlanet(data)) {
-          planets.push(data);
+          savePlanetes(data);
         }
       })
       .on("error", (err) => {
         console.error(err);
         reject(err);
       })
-      .on("end", () => {
-        console.log(`${planets.length} habitable planets found!`);
+      .on("end", async () => {
+        const countPlanetsFound = (await getAllPlanetsFromModel()).length;
+        console.log(`${countPlanetsFound} habitable planets found!`);
         resolve();
       });
   });
+};
+
+export const getAllPlanetsFromModel = async () => {
+  return await planetsModel.find({});
+};
+
+const savePlanetes = async (planet) => {
+  try {
+    await planetsModel.updateOne(
+      { keplerName: planet.kepler_name },
+      { keplerName: planet.kepler_name },
+      { upsert: true }
+    );
+  } catch (err) {
+    console.error(err);
+  }
 };
 
 export default planets;
